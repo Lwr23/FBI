@@ -192,21 +192,6 @@ function updateStatus(id, status){
   <script src="js/admin.js"></script>
 </body>
 </html>
-
-import { getFirestore, collection, getDocs, updateDoc, doc } 
-from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-const db = getFirestore();
-const tableBody = document.querySelector("#applicationsTable tbody");
-
-async function loadApplications() {
-  const querySnapshot = await getDocs(collection(db, "applications"));
-
-  querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
       <td>${data.name}</td>
       <td>${data.age}</td>
       <td>${data.steam}</td>
@@ -218,4 +203,54 @@ async function loadApplications() {
       </td>
   <script type="module" src="js/auth-check.js"></script>
 
+<SCRIPT
+async function giveRole(discordId) {
+  const guild = await client.guilds.fetch("GUILD_ID");
+  const member = await guild.members.fetch(discordId);
+  await member.roles.add("ROLE_ID");
+}
+<SCRIPT
+const { Client, GatewayIntentBits } = require("discord.js");
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
+client.login("BOT_TOKEN");
+
+client.on("ready", () => {
+  console.log("FBI Bot Ready");
+});
+
+app.post("/accept", (req, res) => {
+  giveRole(req.body.discordId);
+  res.send("Role Given");
+});
+<div class="stats">
+  <div class="card pending">Pending: <span id="pending"></span></div>
+  <div class="card accepted">Accepted: <span id="accepted"></span></div>
+  <div class="card rejected">Rejected: <span id="rejected"></span></div>
+</div>
+let p=0,a=0,r=0;
+
+querySnapshot.forEach(d=>{
+  if(d.data().status==="pending") p++;
+  if(d.data().status==="accepted") a++;
+  if(d.data().status==="rejected") r++;
+});
+
+pending.innerText=p;
+accepted.innerText=a;
+rejected.innerText=r;
+{
+  email: "leader@fbi.com",
+  rank: "Director"
+}
+if(adminRank !== "Director") {
+  deleteBtn.style.display = "none";
+}
+await updateDoc(doc(db,"applications",id),{
+  status,
+  note: noteInput.value
+});
+onSnapshot(collection(db,"admin_logs"), (snap)=>{
+  // update UI
+});
+allow write: if request.auth.token.rank == "Director";
