@@ -155,3 +155,67 @@ function updateStatus(id, status){
 
 
 
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>FBI Admin Panel</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"></script>
+</head>
+
+<body class="admin-body">
+
+  <h1>لوحة إدارة FBI</h1>
+
+  <table id="applicationsTable">
+    <thead>
+      <tr>
+        <th>الاسم</th>
+        <th>العمر</th>
+        <th>Steam</th>
+        <th>Discord</th>
+        <th>الحالة</th>
+        <th>تحكم</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- الطلبات تنحط هنا -->
+    </tbody>
+  </table>
+
+  <script src="js/firebase.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
+
+import { getFirestore, collection, getDocs, updateDoc, doc } 
+from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+const db = getFirestore();
+const tableBody = document.querySelector("#applicationsTable tbody");
+
+async function loadApplications() {
+  const querySnapshot = await getDocs(collection(db, "applications"));
+
+  querySnapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${data.name}</td>
+      <td>${data.age}</td>
+      <td>${data.steam}</td>
+      <td>${data.discord}</td>
+      <td>${data.status}</td>
+      <td>
+        <button class="accept">قبول</button>
+        <button class="reject">رفض</button>
+      </td>
+  <script type="module" src="js/auth-check.js"></script>
+
+
