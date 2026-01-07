@@ -5,7 +5,38 @@
   <title>FBI FiveM</title>
 </head>
 <body>
-  <h1>قسم FBI – FiveM</h1>
+  <h1> FBI – Titans</h1>
   <p>مرحبًا بك في النظام</p>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - FBI</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body>
+  <h1>FBI Login</h1>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+
+  <script>
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          alert("Logged in successfully!");
+          window.location.href = "dashboard.html";
+        })
+        .catch(error => {
+          alert(error.message);
+        });
+    }
+  </script>
 </body>
 </html>
