@@ -254,3 +254,168 @@ onSnapshot(collection(db,"admin_logs"), (snap)=>{
   // update UI
 });
 allow write: if request.auth.token.rank == "Director";
+fbi-system/
+│
+├── backend/
+│   ├── server.js
+│   ├── config/
+│   │   └── db.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── cases.js
+│   │   └── criminals.js
+│   └── middleware/
+│       └── auth.js
+│
+├── frontend/
+│   ├── login.html
+│   ├── dashboard.html
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── main.js
+│
+└── database.sql
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50),
+  password VARCHAR(255),
+  rank VARCHAR(20)
+);
+
+CREATE TABLE cases (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(100),
+  description TEXT,
+  status VARCHAR(20),
+  agent VARCHAR(50)
+);
+
+CREATE TABLE criminals (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  charges TEXT,
+  danger_level VARCHAR(20)
+);
+// backend/server.js
+const express = require('express');
+const app = express();
+const cors = require('cors');
+
+app.use(cors());
+app.use(express.json());
+
+app.listen(3000, () => {
+  console.log("FBI System running on port 3000");
+});
+body {
+  background: #0b0f1a;
+  color: #fff;
+  font-family: Arial;
+}
+.card {
+  background: #111827;
+  padding: 20px;
+  border-radius: 10px;
+}
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) UNIQUE,
+  password VARCHAR(255),
+  rank ENUM('Director','Agent') DEFAULT 'Agent'
+);
+// backend/config/db.js
+const mysql = require('mysql2');
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'fbi_system'
+});
+
+db.connect(err => {
+  if (err) throw err;
+  console.log('Database Connected');
+});
+
+module.exports = db;
+// backend/routes/auth.js
+const express = require('express');
+const bcrypt = require('bcrypt');
+const router = express.Router();
+const db = require('../config/db');
+
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  db.query(
+    'SELECT * FROM users WHERE username = ?',
+    [username],
+    async (err, result) => {
+      if (result.length === 0)
+        return res.status(401).json({ msg: 'المستخدم غير موجود' });
+
+      const user = result[0];
+      const match = await bcrypt.compare(password, user.password);
+
+      if (!match)
+        return res.status(401).json({ msg: 'كلمة المرور خاطئة' });
+
+      res.json({
+        msg: 'تم تسجيل الدخول بنجاح',
+        rank: user.rank
+      });
+    }
+  );
+});
+
+module.exports = router;
+// backend/server.js
+const express = require('express');
+const app = express();
+const cors = require('cors');
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/api/auth', require('./routes/auth'));
+
+app.listen(3000, () => {
+  console.log('FBI System Running');
+});
+<!-- frontend/login.html -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>نظام FBI</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="card">
+  <h2>تسجيل دخول FBI</h2>
+  <input id="username" placeholder="اسم المستخدم">
+  <input id="password" type="password" placeholder="كلمة المرور">
+  <button onclick="login()">دخول</button>
+  <p id="msg"></p>
+</div>
+
+<script>
+async function login() {
+  const res = await fetch('http://localhost:3000/api/auth/login', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value
+    })
+  });
+  const data = await res.json();
+  msg.innerText = data.msg;
+}
+</script>
+
+</body>
+</html>
